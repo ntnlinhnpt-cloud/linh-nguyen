@@ -1,0 +1,104 @@
+homework-app/
+├─ package.json
+├─ next.config.js
+├─ pages/
+│  ├─ index.js
+│  └─ class/
+│       └─ [id].js
+├─ components/
+│  └─ HomeworkCard.js
+├─ data/
+│  └─ homework.json
+{
+  "name": "homework-app",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "13.5.6",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  }
+}
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true
+}
+
+module.exports = nextConfig
+{
+  "6.12": [
+    { "id": 1, "title": "Toán - Phân số", "content": "Bài 1: Rút gọn phân số..." },
+    { "id": 2, "title": "Văn - Tập làm văn", "content": "Viết một đoạn văn kể về..." }
+  ],
+  "9.8": [
+    { "id": 1, "title": "Vật lý - Động học", "content": "Giải bài tập 1, 2, 3..." }
+  ],
+  "9.12": [
+    { "id": 1, "title": "Hóa học - Nguyên tử", "content": "Học và trả lời câu hỏi 1,2..." }
+  ]
+}
+export default function HomeworkCard({ homework }) {
+  return (
+    <div style={{
+      border: "1px solid #ccc",
+      padding: "12px",
+      borderRadius: "8px",
+      marginBottom: "12px",
+      boxShadow: "2px 2px 6px rgba(0,0,0,0.1)"
+    }}>
+      <h3 style={{ fontWeight: "bold", fontSize: "18px", marginBottom: "6px" }}>
+        {homework.title}
+      </h3>
+      <p>{homework.content}</p>
+    </div>
+  );
+}
+import Link from "next/link";
+
+export default function Home() {
+  const classes = ["6.12", "9.8", "9.12"];
+  return (
+    <div style={{ maxWidth: "600px", margin: "50px auto", fontFamily: "Arial" }}>
+      <h1 style={{ fontSize: "32px", fontWeight: "bold", marginBottom: "24px" }}>
+        Giao bài tập lớp
+      </h1>
+      <ul>
+        {classes.map((cls) => (
+          <li key={cls} style={{ marginBottom: "12px" }}>
+            <Link href={`/class/${cls}`}>
+              <a style={{ color: "blue", textDecoration: "underline", fontSize: "20px" }}>
+                Lớp {cls}
+              </a>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+import { useRouter } from "next/router";
+import homeworkData from "../../data/homework.json";
+import HomeworkCard from "../../components/HomeworkCard";
+
+export default function ClassPage() {
+  const router = useRouter();
+  const { id } = router.query;
+  const homeworks = homeworkData[id] || [];
+
+  return (
+    <div style={{ maxWidth: "600px", margin: "50px auto", fontFamily: "Arial" }}>
+      <h1 style={{ fontSize: "28px", fontWeight: "bold", marginBottom: "20px" }}>
+        Bài tập lớp {id}
+      </h1>
+      {homeworks.length === 0 ? (
+        <p>Chưa có bài tập nào</p>
+      ) : (
+        homeworks.map((hw) => <HomeworkCard key={hw.id} homework={hw} />)
+      )}
+    </div>
+  );
+}
